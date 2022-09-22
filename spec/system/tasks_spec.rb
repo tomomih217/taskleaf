@@ -17,6 +17,34 @@ describe 'タスク管理機能', type: :system do
         it { expect(page).to have_content '最初のタスク' }
     end
 
+    describe '新規登録機能' do
+        let(:login_user){ user_a }
+        let(:task_name){ '新規作成のテストを書く' }
+
+        before do
+            visit new_task_path
+            #新規登録画面に名称を入力するフォーマット
+            fill_in '名称', with: task_name
+            click_button '登録する'
+        end
+
+        context '新規作成画面で名称を入力した時' do
+            it '正常に登録される' do
+                expect(page).to have_selector '.alert-success', text: '新規作成のテストを書く'
+            end
+        end
+
+        context '新規作成画面で名称を入力しなかった時' do
+            let(:task_name){ '' }
+
+            it 'エラーが起きる' do
+                within '#error_explanation' do
+                    expect(page).to have_content '名称を入力してください'
+                end
+            end
+        end
+    end
+
     describe '一覧表示機能' do 
         context 'ユーザーAがログインしている時' do
             let(:login_user){ user_a }
